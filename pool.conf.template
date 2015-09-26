@@ -43,14 +43,14 @@ listen = /var/run/@@USER@@_fpm.sock
 ; Default Values: user and group are set as the running user
 ;                 mode is set to 0666
 listen.owner = @@USER@@
-listen.group = @@USER@@
+listen.group = @@GROUP@@
 listen.mode = 0660
 
 ; Unix user/group of processes
 ; Note: The user is mandatory. If the group is not set, the default user's group
 ;       will be used.
 user = @@USER@@
-group = @@USER@@
+group = @@GROUP@@
 
 ; Choose how the process manager will control the number of child processes.
 ; Possible Values:
@@ -296,5 +296,5 @@ chdir = /
 ;php_admin_value[error_log] = /var/log/fpm-php.www.log
 ;php_admin_flag[log_errors] = on
 ;php_admin_value[memory_limit] = 32M
-php_admin_value[session.save_path] = "@@HOME_DIR@@/_sessions"
-php_admin_value[open_basedir] = "@@HOME_DIR@@:/usr/share/pear:/usr/share/php:/tmp:/usr/local/lib/php"
+php_admin_value[session.save_path] = "@@DOMAIN_DIR@@/sessions"
+php_admin_value[open_basedir] = "@@DOMAIN_DIR@@:/usr/share/pear:/usr/share/php:/tmp:/usr/local/lib/php"

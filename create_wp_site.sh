@@ -38,9 +38,9 @@ PUBLIC_HTML_DIR='/html'
 CONFIG=$NGINX_CONFIG/$DOMAIN.conf
 cp $CURRENT_DIR/nginx.vhost.ssl.conf.template $CONFIG
 $SED -i "s/@@HOSTNAME@@/$DOMAIN/g" $CONFIG
-$SED -i "s#@@PATH@@#$WEB_ROOT\/"$DOMAIN$PUBLIC_HTML_DIR"#g" $CONFIG
+$SED -i "s/@@PATH@@/$WEB_ROOT\/"$DOMAIN$PUBLIC_HTML_DIR"/g" $CONFIG
 $SED -i "s/@@LOG_PATH@@/$WEB_ROOT\/$HOME_DIR\/logs/g" $CONFIG
-$SED -i "s#@@SOCKET@@#/var/run/"$SHELLUSER"_fpm.sock#g" $CONFIG
+$SED -i "s/@@SOCKET@@/\/var\/run/"$SHELLUSER"_fpm.sock/g" $CONFIG
 
 FPM_SERVERS=5
 MIN_SERVERS=5
@@ -52,7 +52,8 @@ FPMCONF="$PHP_INI_DIR/$DOMAIN.pool.conf"
 cp $CURRENT_DIR/pool.conf.template $FPMCONF
 
 $SED -i "s/@@USER@@/$SHELLUSER/g" $FPMCONF
-$SED -i "s/@@HOME_DIR@@/$WEB_ROOT\/$DOMAIN/g" $FPMCONF
+$SED -i "s/@@GROUP@@/$WEB_SERVER_GROUP/g" $FPMCONF
+$SED -i "s/@@DOMAIN_DIR@@/$WEB_ROOT\/$DOMAIN/g" $FPMCONF
 $SED -i "s/@@START_SERVERS@@/$FPM_SERVERS/g" $FPMCONF
 $SED -i "s/@@MIN_SERVERS@@/$MIN_SERVERS/g" $FPMCONF
 $SED -i "s/@@MAX_SERVERS@@/$MAX_SERVERS/g" $FPMCONF
@@ -74,7 +75,7 @@ mkdir $WEB_ROOT/$HOME_DIR/sessions
 chmod 750 $WEB_ROOT/$HOME_DIR -R
 chmod 700 $WEB_ROOT/$HOME_DIR/sessions
 chmod 770 $WEB_ROOT/$HOME_DIR/logs
-chmod 750 $WEB_ROOT/$HOME_DIR$PUBLIC_HTML_DIR
+chmod 750 $WEB_ROOT/$HOME_DIR/$PUBLIC_HTML_DIR
 chown $SHELLUSER:$WEB_SERVER_GROUP $WEB_ROOT/$HOME_DIR/ -R
 
 systemctl reload nginx
