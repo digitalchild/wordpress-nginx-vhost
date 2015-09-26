@@ -1,0 +1,59 @@
+# Define the http standard config 
+server {
+  server_name @@HOSTNAME@@ www.@@HOSTNAME@@;
+  root "@@PATH@@";
+  index index.php;
+  client_max_body_size 32m;
+  autoindex off;
+  include "@@PATH@@"/nginx.conf;
+  include /etc/nginx/sites-available/wordpress.conf;
+
+  access_log @@LOG_PATH@@/access.log;
+  error_log @@LOG_PATH@@/error.log;
+
+  location ~ ^/.*\.php {
+      #try_files $uri =404;
+      include fastcgi_params;
+      fastcgi_pass unix:@@SOCKET@@;
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      fastcgi_intercept_errors on;
+  }
+}
+
+# Define the SSL configuration 
+server {
+  listen 443 ssl;
+  server_name @@HOSTNAME@@ www.@@HOSTNAME@@;
+  root "@@PATH@@";
+  index index.php;
+  client_max_body_size 32m;
+  autoindex off;
+  include "@@PATH@@"/nginx.conf;
+  include /etc/nginx/sites-available/wordpress.conf;
+
+  access_log @@LOG_PATH@@/access.log;
+  error_log @@LOG_PATH@@/error.log;
+
+  ssl_dhparam /etc/ssl/dhparam.pem;
+
+  ssl_certificate /etc/ssl/certs/@@HOSTNAME@@.crt;
+  ssl_certificate_key /etc/ssl/certs/@@HOSTNAME@@.key;
+  ssl_session_timeout 1d;
+  ssl_session_cache shared:SSL:50m;
+  ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+  #ssl_ciphers ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM;
+  ssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+
+  ssl_prefer_server_ciphers on;
+  add_header Strict-Transport-Security "max-age=31536000 always; includeSubdomains;";
+
+  location ~ ^/.*\.php {
+      #try_files $uri =404;
+      include fastcgi_params;
+      fastcgi_pass unix:@@SOCKET@@;
+      fastcgi_param HTTPS on;
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      fastcgi_intercept_errors on;
+  }
+
+}
