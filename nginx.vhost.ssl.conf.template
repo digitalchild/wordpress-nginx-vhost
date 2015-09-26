@@ -1,11 +1,11 @@
 # Define the http standard config 
 server {
   server_name @@HOSTNAME@@ www.@@HOSTNAME@@;
-  root "@@PATH@@";
+  root @@PATH@@;
   index index.php;
   client_max_body_size 32m;
   autoindex off;
-  include "@@PATH@@"/nginx.conf;
+  include @@PATH@@/nginx.conf;
   include /etc/nginx/sites-available/wordpress.conf;
 
   access_log @@LOG_PATH@@/access.log;
